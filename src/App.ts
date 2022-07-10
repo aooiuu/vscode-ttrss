@@ -13,8 +13,10 @@ class App {
   private currentFeed?: Feed;
   private refreshTimer?: NodeJS.Timer;
   private webviewPanel?: vscode.WebviewPanel;
+  private context?: vscode.ExtensionContext;
 
   activate(context: vscode.ExtensionContext) {
+    this.context = context;
     const registerCommand = vscode.commands.registerCommand;
     const registerTreeDataProvider = vscode.window.registerTreeDataProvider;
     [
@@ -286,10 +288,18 @@ class App {
         retainContextWhenHidden: true,
         enableScripts: true
       });
+      this.webviewPanel.onDidDispose(
+        () => {
+          this.webviewPanel = undefined;
+        },
+        this,
+        this.context!.subscriptions
+      );
     } else {
       this.webviewPanel.title = article.title;
     }
     this.webviewPanel.webview.html = content;
+    this.webviewPanel.reveal();
   }
 
   viewInBrowser(article: Article) {
