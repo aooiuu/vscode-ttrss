@@ -209,7 +209,8 @@ class App {
           content = content.replace(/<img .*?>/gim, '');
         }
 
-        content && this.openWebviewPanel(article, `<style>body{font-size:1em}</style>${content}`);
+        const injectedHtml = config.app.get('injectedHtml', '');
+        content && this.openWebviewPanel(article, `${injectedHtml}<style>body{font-size:1em}</style>${content}`);
         article.unread = false;
         this.markAsReadByArticleIds(article.id, article.unread);
         await ttrss.fetch({

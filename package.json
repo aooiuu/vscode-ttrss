@@ -91,6 +91,11 @@
           ],
           "default": "all_articles",
           "description": "view_mode (string = all_articles, unread, adaptive, marked, updated)"
+        },
+        "z-rss.injectedHtml": {
+          "type": "string",
+          "default": "",
+          "description": "injected html: <style>...</style><script>...</script>"
         }
       }
     },
