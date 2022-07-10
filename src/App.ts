@@ -171,9 +171,11 @@ class App {
         cancellable: false
       },
       async () => {
+        const viewMode: string = config.app.get('getHeadlinesViewMode', '');
         const res = await ttrss.fetch({
           op: 'getHeadlines',
-          ...params
+          ...params,
+          view_mode: params.viewMode || viewMode
         });
         if (Array.isArray(res?.content)) {
           this.articles = res?.content;

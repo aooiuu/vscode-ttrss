@@ -79,6 +79,18 @@
           "type": "string",
           "default": "title:",
           "description": "search prefix: https://tt-rss.org/wiki/SearchSyntax"
+        },
+        "z-rss.getHeadlinesViewMode": {
+          "type": "string",
+          "enum": [
+            "all_articles",
+            "unread",
+            "adaptive",
+            "marked",
+            "updated"
+          ],
+          "default": "all_articles",
+          "description": "view_mode (string = all_articles, unread, adaptive, marked, updated)"
         }
       }
     },
