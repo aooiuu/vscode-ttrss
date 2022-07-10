@@ -74,6 +74,11 @@
           "type": "boolean",
           "default": false,
           "description": "hide image"
+        },
+        "z-rss.searchPrefix": {
+          "type": "string",
+          "default": "title:",
+          "description": "search prefix: https://tt-rss.org/wiki/SearchSyntax"
         }
       }
     },
@@ -125,6 +130,11 @@
       {
         "command": "z-rss.unsubscribeFeed",
         "title": "unsubscribe feed"
+      },
+      {
+        "command": "z-rss.searchArticles",
+        "title": "search articles",
+        "icon": "$(search)"
       }
     ],
     "viewsContainers": {
@@ -153,12 +163,17 @@
         {
           "command": "z-rss.signin",
           "when": "view == z-rss-feeds",
-          "group": "navigation"
+          "group": "navigation@3"
         },
         {
           "command": "z-rss.getFeedList",
           "when": "view == z-rss-feeds",
-          "group": "navigation"
+          "group": "navigation@1"
+        },
+        {
+          "command": "z-rss.searchArticles",
+          "when": "view == z-rss-feeds",
+          "group": "navigation@2"
         },
         {
           "command": "z-rss.getArticleList",

@@ -9,5 +9,6 @@ export enum COMMANDS {
   unstar = 'z-rss.unstar',
   viewInBrowser = 'z-rss.viewInBrowser',
   subscribeToFeed = 'z-rss.subscribeToFeed',
-  unsubscribeFeed = 'z-rss.unsubscribeFeed'
+  unsubscribeFeed = 'z-rss.unsubscribeFeed',
+  searchArticles = 'z-rss.searchArticles'
 }

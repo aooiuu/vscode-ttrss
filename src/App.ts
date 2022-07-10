@@ -6,17 +6,12 @@ import { config } from './config';
 import { COMMANDS } from './constants';
 
 class App {
-  private feedListProvider: FeedListProvider;
-  private articleListProvider: ArticleListProvider;
+  private feedListProvider: FeedListProvider = new FeedListProvider();
+  private articleListProvider: ArticleListProvider = new ArticleListProvider();
   private feeds: Feed[] = [];
   private articles: Article[] = [];
   private currentFeed?: Feed;
   private refreshTimer?: NodeJS.Timer;
-
-  constructor() {
-    this.feedListProvider = new FeedListProvider();
-    this.articleListProvider = new ArticleListProvider();
-  }
 
   activate(context: vscode.ExtensionContext) {
     const registerCommand = vscode.commands.registerCommand;
@@ -32,7 +27,8 @@ class App {
       registerCommand(COMMANDS.unstar, this.unstar, this),
       registerCommand(COMMANDS.viewInBrowser, this.viewInBrowser, this),
       registerCommand(COMMANDS.subscribeToFeed, this.subscribeToFeed, this),
-      registerCommand(COMMANDS.unsubscribeFeed, this.unsubscribeFeed, this)
+      registerCommand(COMMANDS.unsubscribeFeed, this.unsubscribeFeed, this),
+      registerCommand(COMMANDS.searchArticles, this.searchArticles, this)
     ].forEach((command) => context.subscriptions.push(command));
     registerTreeDataProvider('z-rss-feeds', this.feedListProvider);
     registerTreeDataProvider('z-rss-articles', this.articleListProvider);
@@ -147,7 +143,7 @@ class App {
         } else {
           this.feeds = [];
         }
-        this.feedListProvider?.refresh();
+        this.feedListProvider.refresh();
       }
     );
   }
@@ -161,6 +157,13 @@ class App {
     if (!feed) {
       return;
     }
+    await this.getHeadlines({
+      feed_id: feed.bare_id,
+      is_cat: feed.id.startsWith('CAT:')
+    });
+  }
+
+  async getHeadlines(params: any, feed?: Feed) {
     await vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Window,
@@ -170,17 +173,14 @@ class App {
       async () => {
         const res = await ttrss.fetch({
           op: 'getHeadlines',
-          feed_id: feed.bare_id,
-          is_cat: feed.id.startsWith('CAT:')
-          // view_mode (string = all_articles, unread, adaptive, marked, updated)
-          // view_mode: "adaptive",
+          ...params
         });
         if (Array.isArray(res?.content)) {
           this.articles = res?.content;
         } else {
           this.articles = [];
         }
-        this.articleListProvider?.refresh();
+        this.articleListProvider.refresh();
         this.currentFeed = feed;
       }
     );
@@ -209,13 +209,11 @@ class App {
 
         content && this.openWebviewPanel(article, `<style>body{font-size:1em}</style>${content}`);
         article.unread = false;
-        this.articleListProvider?.refresh();
-
+        this.markAsReadByArticleIds(article.id, article.unread);
         await ttrss.fetch({
           op: 'updateArticle',
           article_ids: article.id,
           mode: Number(article.unread),
-          // field (integer) - field to operate on (0 - starred, 1 - published, 2 - unread, 3 - article note since api level 1)
           field: 2
         });
 
@@ -224,17 +222,38 @@ class App {
     );
   }
 
-  async markAsRead(pFeed?: Feed) {
-    const feed = pFeed || this.currentFeed;
-    if (!feed) {
-      return;
-    }
+  async markAsReadByArticleIds(ids: string | string[], isRead: boolean) {
+    await ttrss.fetch({
+      op: 'updateArticle',
+      article_ids: typeof ids === 'object' ? ids.join(',') : ids,
+      mode: Number(!isRead),
+      field: 2
+    });
+    this.articleListProvider.refresh();
+  }
+
+  async markAsReadByFeed(feed: Feed) {
     await ttrss.fetch({
       op: 'catchupFeed',
       feed_id: feed.bare_id,
       is_cat: feed.id.startsWith('CAT:')
     });
-    this.getArticleList(feed);
+  }
+
+  async markAsRead(feed?: Feed) {
+    if (feed) {
+      await this.markAsReadByFeed(feed);
+      await this.getArticleList(feed);
+    } else {
+      await this.markAsReadByArticleIds(
+        this.articles.map((article) => {
+          article.unread = false;
+          return article.id;
+        }),
+        true
+      );
+    }
+    this.articleListProvider.refresh();
     this.getFeedList();
   }
 
@@ -274,6 +293,22 @@ class App {
   subscribeToFeed() {}
 
   unsubscribeFeed() {}
+
+  async searchArticles() {
+    const searchPrefix = config.app.get('searchPrefix', '');
+    const keyword = await vscode.window.showInputBox({
+      prompt: 'Search query consists of several keywords. Several special keywords are available: https://tt-rss.org/wiki/SearchSyntax',
+      value: searchPrefix
+    });
+    if (!keyword) {
+      return;
+    }
+    this.getHeadlines({
+      feed_id: -4,
+      search: keyword,
+      search_mode: 'all_feeds'
+    });
+  }
 }
 
 export const app = new App();
