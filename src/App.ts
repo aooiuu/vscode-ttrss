@@ -1,9 +1,9 @@
-import * as vscode from "vscode";
-import { FeedListProvider, Feed } from "./explorer/feeds";
-import { ArticleListProvider, Article } from "./explorer/articles";
-import ttrss from "./ttrss";
-import { config } from "./config";
-import { COMMANDS } from "./constants";
+import * as vscode from 'vscode';
+import { FeedListProvider, Feed } from './explorer/feeds';
+import { ArticleListProvider, Article } from './explorer/articles';
+import ttrss from './ttrss';
+import { config } from './config';
+import { COMMANDS } from './constants';
 
 class App {
   private feedListProvider: FeedListProvider;
@@ -32,14 +32,14 @@ class App {
       registerCommand(COMMANDS.unstar, this.unstar, this),
       registerCommand(COMMANDS.viewInBrowser, this.viewInBrowser, this),
       registerCommand(COMMANDS.subscribeToFeed, this.subscribeToFeed, this),
-      registerCommand(COMMANDS.unsubscribeFeed, this.unsubscribeFeed, this),
+      registerCommand(COMMANDS.unsubscribeFeed, this.unsubscribeFeed, this)
     ].forEach((command) => context.subscriptions.push(command));
-    registerTreeDataProvider("z-rss-feeds", this.feedListProvider);
-    registerTreeDataProvider("z-rss-articles", this.articleListProvider);
+    registerTreeDataProvider('z-rss-feeds', this.feedListProvider);
+    registerTreeDataProvider('z-rss-articles', this.articleListProvider);
 
     this.initRefreshTimer();
     vscode.workspace.onDidChangeConfiguration(async (e) => {
-      if (e.affectsConfiguration("z-rss.refreshInterval")) {
+      if (e.affectsConfiguration('z-rss.refreshInterval')) {
         this.initRefreshTimer();
       }
     });
@@ -48,7 +48,7 @@ class App {
 
   initRefreshTimer() {
     this.refreshTimer && clearInterval(this.refreshTimer);
-    const refreshInterval: number = config.app.get("refreshInterval", 0) * 1000;
+    const refreshInterval: number = config.app.get('refreshInterval', 0) * 1000;
     if (refreshInterval) {
       this.refreshTimer = setInterval(() => {
         vscode.commands.executeCommand(COMMANDS.getFeedList);
@@ -58,37 +58,38 @@ class App {
 
   async signin() {
     const url = await vscode.window.showInputBox({
-      prompt: "server url",
+      prompt: 'server url'
     });
     if (!url) {
       return;
     }
     const user = await vscode.window.showInputBox({
-      prompt: "user",
+      prompt: 'user'
     });
     if (!user) {
       return;
     }
     const password = await vscode.window.showInputBox({
-      prompt: "password",
-      password: true,
+      prompt: 'password',
+      password: true
     });
     if (!password) {
       return;
     }
-    config.app.update("url", url, true)
-      .then(() => config.app.update("user", user, true))
-      .then(() => config.app.update("password", password, true))
-      .then(()=> vscode.commands.executeCommand(COMMANDS.getFeedList));
+    config.app
+      .update('url', url, true)
+      .then(() => config.app.update('user', user, true))
+      .then(() => config.app.update('password', password, true))
+      .then(() => vscode.commands.executeCommand(COMMANDS.getFeedList));
   }
 
   async signout() {
-    config.app.update("url", "", true);
-    config.app.update("user", "", true);
-    config.app.update("password", "", true);
+    config.app.update('url', '', true);
+    config.app.update('user', '', true);
+    config.app.update('password', '', true);
     ttrss.sid = undefined;
     await ttrss.fetch({
-      op: "logout",
+      op: 'logout'
     });
   }
 
@@ -114,22 +115,20 @@ class App {
     await vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Window,
-        title: "loading...",
-        cancellable: false,
+        title: 'loading...',
+        cancellable: false
       },
       async () => {
         const res = await ttrss.fetch({
-          op: "getFeedTree",
+          op: 'getFeedTree'
         });
         const feedsRes = await ttrss.fetch({
-          op: "getFeeds",
-          cat_id: -3,
+          op: 'getFeeds',
+          cat_id: -3
         });
         const items = res?.content?.categories?.items as Feed[];
         if (Array.isArray(items) && Array.isArray(feedsRes?.content)) {
-          const feedMap = new Map(
-            feedsRes.content.map((feed: any): [number, any] => [feed.id, feed])
-          );
+          const feedMap = new Map(feedsRes.content.map((feed: any): [number, any] => [feed.id, feed]));
           this.mergeFeedInfo(items, feedMap);
 
           items.forEach((feed) => {
@@ -165,14 +164,14 @@ class App {
     await vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Window,
-        title: "loading...",
-        cancellable: false,
+        title: 'loading...',
+        cancellable: false
       },
       async () => {
         const res = await ttrss.fetch({
-          op: "getHeadlines",
+          op: 'getHeadlines',
           feed_id: feed.bare_id,
-          is_cat: feed.id.startsWith("CAT:"),
+          is_cat: feed.id.startsWith('CAT:')
           // view_mode (string = all_articles, unread, adaptive, marked, updated)
           // view_mode: "adaptive",
         });
@@ -191,37 +190,33 @@ class App {
     await vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Window,
-        title: "loading...",
-        cancellable: false,
+        title: 'loading...',
+        cancellable: false
       },
       async () => {
         const res = await ttrss.fetch({
-          op: "getArticle",
-          article_id: article.id,
+          op: 'getArticle',
+          article_id: article.id
         });
         let content = res?.content?.[0]?.content;
         if (!content) {
           return;
         }
 
-        if (config.app.get("hideImage", false)) {
-          content = content.replace(/<img .*?>/gim, "");
+        if (config.app.get('hideImage', false)) {
+          content = content.replace(/<img .*?>/gim, '');
         }
 
-        content &&
-          this.openWebviewPanel(
-            article,
-            `<style>body{font-size:1em}</style>${content}`
-          );
+        content && this.openWebviewPanel(article, `<style>body{font-size:1em}</style>${content}`);
         article.unread = false;
         this.articleListProvider?.refresh();
 
         await ttrss.fetch({
-          op: "updateArticle",
+          op: 'updateArticle',
           article_ids: article.id,
           mode: Number(article.unread),
           // field (integer) - field to operate on (0 - starred, 1 - published, 2 - unread, 3 - article note since api level 1)
-          field: 2,
+          field: 2
         });
 
         await this.getFeedList();
@@ -235,9 +230,9 @@ class App {
       return;
     }
     await ttrss.fetch({
-      op: "catchupFeed",
+      op: 'catchupFeed',
       feed_id: feed.bare_id,
-      is_cat: feed.id.startsWith("CAT:"),
+      is_cat: feed.id.startsWith('CAT:')
     });
     this.getArticleList(feed);
     this.getFeedList();
@@ -253,22 +248,20 @@ class App {
 
   async starArticle(article: Article, isStar: boolean) {
     await ttrss.fetch({
-      op: "updateArticle",
+      op: 'updateArticle',
       article_ids: article.id,
       mode: Number(isStar),
-      field: 0,
+      field: 0
     });
     this.getArticleList();
     this.getFeedList();
   }
 
   async openWebviewPanel(article: Article, content: string) {
-    const panel = vscode.window.createWebviewPanel(
-      "rss",
-      article.title,
-      vscode.ViewColumn.One,
-      { retainContextWhenHidden: true, enableScripts: true }
-    );
+    const panel = vscode.window.createWebviewPanel('rss', article.title, vscode.ViewColumn.One, {
+      retainContextWhenHidden: true,
+      enableScripts: true
+    });
     panel.webview.html = content;
   }
 

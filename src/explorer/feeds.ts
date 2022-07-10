@@ -1,13 +1,9 @@
-import * as vscode from "vscode";
-import { app } from "../App";
-import { COMMANDS } from "../constants";
+import * as vscode from 'vscode';
+import { app } from '../App';
+import { COMMANDS } from '../constants';
 
-export class FeedListProvider
-  implements vscode.TreeDataProvider<vscode.TreeItem>
-{
-  private _onDidChangeTreeData = new vscode.EventEmitter<
-    vscode.TreeItem | undefined
-  >();
+export class FeedListProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
+  private _onDidChangeTreeData = new vscode.EventEmitter<vscode.TreeItem | undefined>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   refresh(): void {
@@ -15,7 +11,7 @@ export class FeedListProvider
   }
 
   getTreeItem(feed: Feed): vscode.TreeItem {
-    let label: string = "";
+    let label: string = '';
     if (feed.unread > 0) {
       label = feed.name + ` (${feed.unread})`;
     } else {
@@ -28,16 +24,14 @@ export class FeedListProvider
       tooltip: feed.name,
       // iconPath:
       //   feed.unread > 0 ? new vscode.ThemeIcon("circle-filled") : undefined,
-      collapsibleState: feed.items?.length
-        ? vscode.TreeItemCollapsibleState.Collapsed
-        : vscode.TreeItemCollapsibleState.None,
+      collapsibleState: feed.items?.length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None,
       command: feed.items?.length
         ? undefined
         : {
             command: COMMANDS.getArticleList,
-            title: "getArticleList",
-            arguments: [feed],
-          },
+            title: 'getArticleList',
+            arguments: [feed]
+          }
     };
   }
 
@@ -50,7 +44,7 @@ export class FeedListProvider
   }
 }
 
-type FeedType = "category" | "feed";
+type FeedType = 'category' | 'feed';
 
 export class Feed {
   constructor(

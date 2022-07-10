@@ -1,7 +1,7 @@
-import { workspace } from "vscode";
+import { workspace } from 'vscode';
 
 export class config {
   static get app() {
-    return workspace.getConfiguration("z-rss");
+    return workspace.getConfiguration('z-rss');
   }
 }

@@ -1,13 +1,9 @@
-import * as vscode from "vscode";
-import { app } from "../App";
-import { COMMANDS } from "../constants";
+import * as vscode from 'vscode';
+import { app } from '../App';
+import { COMMANDS } from '../constants';
 
-export class ArticleListProvider
-  implements vscode.TreeDataProvider<vscode.TreeItem>
-{
-  private _onDidChangeTreeData = new vscode.EventEmitter<
-    vscode.TreeItem | undefined
-  >();
+export class ArticleListProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
+  private _onDidChangeTreeData = new vscode.EventEmitter<vscode.TreeItem | undefined>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   refresh(): void {
@@ -19,17 +15,15 @@ export class ArticleListProvider
       label: article.title,
       id: article.id,
       tooltip: article.title,
-      iconPath: article.unread
-        ? new vscode.ThemeIcon("circle-filled")
-        : undefined,
-      contextValue: article.marked ? "unstar" : "star",
+      iconPath: article.unread ? new vscode.ThemeIcon('circle-filled') : undefined,
+      contextValue: article.marked ? 'unstar' : 'star',
       description: new Date(article.updated * 1000).toLocaleString(),
       collapsibleState: vscode.TreeItemCollapsibleState.None,
       command: {
         command: COMMANDS.getArticle,
-        title: "getArticle",
-        arguments: [article],
-      },
+        title: 'getArticle',
+        arguments: [article]
+      }
     };
   }
 

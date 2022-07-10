@@ -1,36 +1,36 @@
-import got from "got";
-import { config } from "./config";
+import got from 'got';
+import { config } from './config';
 
 class TTRSS {
   public url?: string;
   public sid?: string;
 
   async login() {
-    this.url = config.app.get("url", "").replace(/\/+$/, "/api");
-    const user = config.app.get("user");
-    const password = config.app.get("password");
+    this.url = config.app.get('url', '').replace(/\/+$/, '/api');
+    const user = config.app.get('user');
+    const password = config.app.get('password');
     if (!user || !password) {
       return;
     }
     const res = await this.fetch({
-      op: "login",
+      op: 'login',
       user,
-      password,
+      password
     });
     this.sid = res.content.session_id;
   }
 
   async fetch(params: any) {
-    if (!this.sid && params.op !== "login") {
+    if (!this.sid && params.op !== 'login') {
       await this.login();
     }
     const res: any = await got({
       url: this.url,
-      method: "POST",
+      method: 'POST',
       json: {
         ...params,
-        sid: this.sid,
-      },
+        sid: this.sid
+      }
     }).catch((err) => console.warn(err));
     if (!res) {
       return;
