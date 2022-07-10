@@ -286,6 +286,8 @@ class App {
         retainContextWhenHidden: true,
         enableScripts: true
       });
+    } else {
+      this.webviewPanel.title = article.title;
     }
     this.webviewPanel.webview.html = content;
   }
