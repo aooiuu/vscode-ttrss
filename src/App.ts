@@ -12,6 +12,7 @@ class App {
   private articles: Article[] = [];
   private currentFeed?: Feed;
   private refreshTimer?: NodeJS.Timer;
+  private webviewPanel?: vscode.WebviewPanel;
 
   activate(context: vscode.ExtensionContext) {
     const registerCommand = vscode.commands.registerCommand;
@@ -280,11 +281,13 @@ class App {
   }
 
   async openWebviewPanel(article: Article, content: string) {
-    const panel = vscode.window.createWebviewPanel('rss', article.title, vscode.ViewColumn.One, {
-      retainContextWhenHidden: true,
-      enableScripts: true
-    });
-    panel.webview.html = content;
+    if (!this.webviewPanel) {
+      this.webviewPanel = vscode.window.createWebviewPanel('rss', article.title, vscode.ViewColumn.One, {
+        retainContextWhenHidden: true,
+        enableScripts: true
+      });
+    }
+    this.webviewPanel.webview.html = content;
   }
 
   viewInBrowser(article: Article) {
