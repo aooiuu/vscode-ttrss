@@ -205,17 +205,16 @@ class App {
         });
         let content = res?.content?.[0]?.content;
         if (!content) {
-          return;
+          vscode.window.showWarningMessage('empty content');
+        } else {
+          if (config.app.get('hideImage', false)) {
+            content = content.replace(/<img .*?>/gim, '');
+          }
+          const injectedHtml = config.app.get('injectedHtml', '');
+          content && this.openWebviewPanel(article, `${injectedHtml}<style>body{font-size:1em}</style>${content}`);
         }
-
-        if (config.app.get('hideImage', false)) {
-          content = content.replace(/<img .*?>/gim, '');
-        }
-
-        const injectedHtml = config.app.get('injectedHtml', '');
-        content && this.openWebviewPanel(article, `${injectedHtml}<style>body{font-size:1em}</style>${content}`);
         article.unread = false;
-        this.markAsReadByArticleIds(article.id, article.unread);
+        this.markAsReadByArticleIds(article.id, true);
         await ttrss.fetch({
           op: 'updateArticle',
           article_ids: article.id,
