@@ -14,6 +14,7 @@ class App {
   private refreshTimer?: NodeJS.Timer;
   private webviewPanel?: vscode.WebviewPanel;
   private context?: vscode.ExtensionContext;
+  private refreshArticleListFn: Function = async () => {};
 
   activate(context: vscode.ExtensionContext) {
     this.context = context;
@@ -155,18 +156,21 @@ class App {
     return this.articles;
   }
 
-  async getArticleList(pFeed?: Feed) {
-    const feed = pFeed || this.currentFeed;
+  async getArticleList(feed?: Feed) {
     if (!feed) {
-      return;
+      await this.refreshArticleListFn();
+    } else {
+      await this.getHeadlines({
+        feed_id: feed.bare_id,
+        is_cat: feed.id.startsWith('CAT:')
+      });
     }
-    await this.getHeadlines({
-      feed_id: feed.bare_id,
-      is_cat: feed.id.startsWith('CAT:')
-    });
   }
 
   async getHeadlines(params: any, feed?: Feed) {
+    this.refreshArticleListFn = async () => {
+      await this.getHeadlines(params, feed);
+    };
     await vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Window,
@@ -214,14 +218,7 @@ class App {
           content && this.openWebviewPanel(article, `${injectedHtml}<style>body{font-size:1em}</style>${content}`);
         }
         article.unread = false;
-        this.markAsReadByArticleIds(article.id, true);
-        await ttrss.fetch({
-          op: 'updateArticle',
-          article_ids: article.id,
-          mode: Number(article.unread),
-          field: 2
-        });
-
+        await this.markAsReadByArticleIds(article.id, true);
         await this.getFeedList();
       }
     );
