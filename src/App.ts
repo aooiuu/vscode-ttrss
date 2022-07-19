@@ -10,7 +10,6 @@ class App {
   private articleListProvider: ArticleListProvider = new ArticleListProvider();
   private feeds: Feed[] = [];
   private articles: Article[] = [];
-  private currentFeed?: Feed;
   private refreshTimer?: NodeJS.Timer;
   private webviewPanel?: vscode.WebviewPanel;
   private context?: vscode.ExtensionContext;
@@ -167,9 +166,9 @@ class App {
     }
   }
 
-  async getHeadlines(params: any, feed?: Feed) {
+  async getHeadlines(params: any) {
     this.refreshArticleListFn = async () => {
-      await this.getHeadlines(params, feed);
+      await this.getHeadlines(params);
     };
     await vscode.window.withProgress(
       {
@@ -190,7 +189,6 @@ class App {
           this.articles = [];
         }
         this.articleListProvider.refresh();
-        this.currentFeed = feed;
       }
     );
   }
