@@ -1,6 +1,7 @@
 # z-rss
 
 > tt-rss for vscode
+> 插件需要搭配 [tt-rss](https://tt-rss.org/) 使用
 
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=aooiu.z-rss">
