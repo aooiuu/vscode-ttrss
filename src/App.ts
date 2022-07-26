@@ -277,8 +277,10 @@ class App {
   }
 
   async openWebviewPanel(article: Article, content: string) {
+    const title: string = config.app.get('readerViewTitle', '').replace(new RegExp('\\${name}', 'g'), article.title || '');
+
     if (!this.webviewPanel) {
-      this.webviewPanel = vscode.window.createWebviewPanel('rss', article.title, vscode.ViewColumn.One, {
+      this.webviewPanel = vscode.window.createWebviewPanel('rss', title, vscode.ViewColumn.One, {
         retainContextWhenHidden: true,
         enableScripts: true
       });
@@ -290,7 +292,7 @@ class App {
         this.context!.subscriptions
       );
     } else {
-      this.webviewPanel.title = article.title;
+      this.webviewPanel.title = title;
     }
     this.webviewPanel.webview.html = content;
     this.webviewPanel.reveal();

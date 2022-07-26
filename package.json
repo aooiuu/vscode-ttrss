@@ -3,7 +3,7 @@
   "displayName": "Z RSS",
   "description": "Tiny Tiny RSS (tt-rss) for vscode",
   "icon": "resources/rss.png",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "license": "MIT",
   "publisher": "aooiu",
   "qna": "https://github.com/aooiuu/z-rss.git/issues",
@@ -78,7 +78,7 @@
         "z-rss.searchPrefix": {
           "type": "string",
           "default": "title:",
-          "description": "search prefix: https://tt-rss.org/wiki/SearchSyntax"
+          "markdownDescription": "[https://tt-rss.org/wiki/SearchSyntax](https://tt-rss.org/wiki/SearchSyntax)"
         },
         "z-rss.getHeadlinesViewMode": {
           "type": "string",
@@ -96,6 +96,11 @@
           "type": "string",
           "default": "",
           "description": "injected html: <style>...</style><script>...</script>"
+        },
+        "z-rss.readerViewTitle": {
+          "type": "string",
+          "default": "${name}",
+          "markdownDescription": "panel title"
         }
       }
     },
