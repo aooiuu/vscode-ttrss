@@ -3,17 +3,17 @@
   "displayName": "Z RSS",
   "description": "Tiny Tiny RSS (tt-rss) for vscode",
   "icon": "resources/rss.png",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "MIT",
   "publisher": "aooiu",
-  "qna": "https://github.com/aooiuu/z-rss.git/issues",
+  "qna": "https://github.com/aooiuu/vscode-ttrss/issues",
   "bugs": {
-    "url": "https://github.com/aooiuu/z-rss.git/issues",
+    "url": "https://github.com/aooiuu/vscode-ttrss/issues",
     "email": "aooiu@qq.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/aooiuu/z-rss.git"
+    "url": "https://github.com/aooiuu/vscode-ttrss"
   },
   "keywords": [
     "rss",
