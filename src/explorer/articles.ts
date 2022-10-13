@@ -26,7 +26,7 @@ export class ArticleListProvider implements vscode.TreeDataProvider<vscode.TreeI
 
     return {
       label: article.title,
-      id: article.id,
+      id: String(article.id),
       tooltip: new vscode.MarkdownString(tooltip.replace(/\n/g, '\n\n')),
       iconPath: article.unread ? new vscode.ThemeIcon('circle-filled') : undefined,
       contextValue: article.marked ? 'unstar' : 'star',

@@ -161,7 +161,7 @@ class App {
     } else {
       await this.getHeadlines({
         feed_id: feed.bare_id,
-        is_cat: feed.id.startsWith('CAT:')
+        is_cat: String(feed.id).startsWith('CAT:')
       });
     }
   }
@@ -236,7 +236,7 @@ class App {
     await ttrss.fetch({
       op: 'catchupFeed',
       feed_id: feed.bare_id,
-      is_cat: feed.id.startsWith('CAT:')
+      is_cat: String(feed.id).startsWith('CAT:')
     });
   }
 

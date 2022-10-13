@@ -20,7 +20,7 @@ export class FeedListProvider implements vscode.TreeDataProvider<vscode.TreeItem
 
     return {
       label,
-      id: feed.id,
+      id: String(feed.id),
       tooltip: feed.name,
       // iconPath:
       //   feed.unread > 0 ? new vscode.ThemeIcon("circle-filled") : undefined,

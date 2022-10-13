@@ -3,7 +3,7 @@
   "displayName": "Z RSS",
   "description": "Tiny Tiny RSS (tt-rss) for vscode",
   "icon": "resources/rss.png",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "license": "MIT",
   "publisher": "aooiu",
   "qna": "https://github.com/aooiuu/vscode-ttrss/issues",
