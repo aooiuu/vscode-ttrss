@@ -26,6 +26,7 @@ class App {
       registerCommand(COMMANDS.getArticleList, this.getArticleList, this),
       registerCommand(COMMANDS.getArticle, this.getArticle, this),
       registerCommand(COMMANDS.markAsRead, this.markAsRead, this),
+      registerCommand(COMMANDS.markAsReadAndNextPage, this.markAsReadAndNextPage, this),
       registerCommand(COMMANDS.star, this.star, this),
       registerCommand(COMMANDS.unstar, this.unstar, this),
       registerCommand(COMMANDS.viewInBrowser, this.viewInBrowser, this),
@@ -255,6 +256,11 @@ class App {
     }
     this.articleListProvider.refresh();
     this.getFeedList();
+  }
+
+  async markAsReadAndNextPage() {
+    this.markAsRead();
+    this.getArticleList();
   }
 
   async star(article: Article) {

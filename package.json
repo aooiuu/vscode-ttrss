@@ -3,7 +3,7 @@
   "displayName": "Z RSS",
   "description": "Tiny Tiny RSS (tt-rss) for vscode",
   "icon": "resources/rss.png",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "license": "MIT",
   "publisher": "aooiu",
   "qna": "https://github.com/aooiuu/vscode-ttrss/issues",
@@ -131,6 +131,11 @@
         "icon": "$(check-all)"
       },
       {
+        "command": "z-rss.markAsReadAndNextPage",
+        "title": "mark as read and next page",
+        "icon": "$(repo-sync)"
+      },
+      {
         "command": "z-rss.star",
         "title": "star",
         "icon": "$(star)"
@@ -183,11 +188,6 @@
     "menus": {
       "view/title": [
         {
-          "command": "z-rss.signin",
-          "when": "view == z-rss-feeds",
-          "group": "navigation@3"
-        },
-        {
           "command": "z-rss.getFeedList",
           "when": "view == z-rss-feeds",
           "group": "navigation@1"
@@ -198,14 +198,24 @@
           "group": "navigation@2"
         },
         {
-          "command": "z-rss.getArticleList",
-          "when": "view == z-rss-articles",
-          "group": "navigation"
+          "command": "z-rss.signin",
+          "when": "view == z-rss-feeds",
+          "group": "navigation@3"
         },
         {
           "command": "z-rss.markAsRead",
           "when": "view == z-rss-articles",
-          "group": "navigation"
+          "group": "navigation@1"
+        },
+        {
+          "command": "z-rss.getArticleList",
+          "when": "view == z-rss-articles",
+          "group": "navigation@2"
+        },
+        {
+          "command": "z-rss.markAsReadAndNextPage",
+          "when": "view == z-rss-articles",
+          "group": "navigation@3"
         }
       ],
       "view/item/context": [

@@ -5,6 +5,7 @@ export enum COMMANDS {
   getArticle = 'z-rss.getArticle',
   getArticleList = 'z-rss.getArticleList',
   markAsRead = 'z-rss.markAsRead',
+  markAsReadAndNextPage = 'z-rss.markAsReadAndNextPage',
   star = 'z-rss.star',
   unstar = 'z-rss.unstar',
   viewInBrowser = 'z-rss.viewInBrowser',
