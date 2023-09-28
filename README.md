@@ -1,7 +1,7 @@
-# z-rss
+# vscode-ttrss
 
 > tt-rss for vscode
-> 插件需要搭配 [tt-rss](https://tt-rss.org/) 使用
+> 插件必须搭配 [tt-rss](https://tt-rss.org/) 使用, 推荐同时和 [RSSHub](https://github.com/DIYgod/RSSHub) 搭配使用效果更佳
 
 <p align="center">
   <a href="https://github.com/aooiuu/vscode-ttrss">

@@ -14,6 +14,7 @@ class App {
   private webviewPanel?: vscode.WebviewPanel;
   private context?: vscode.ExtensionContext;
   private refreshArticleListFn: Function = async () => {};
+  private page: number = 1;
 
   activate(context: vscode.ExtensionContext) {
     this.context = context;
@@ -32,7 +33,9 @@ class App {
       registerCommand(COMMANDS.viewInBrowser, this.viewInBrowser, this),
       registerCommand(COMMANDS.subscribeToFeed, this.subscribeToFeed, this),
       registerCommand(COMMANDS.unsubscribeFeed, this.unsubscribeFeed, this),
-      registerCommand(COMMANDS.searchArticles, this.searchArticles, this)
+      registerCommand(COMMANDS.searchArticles, this.searchArticles, this),
+      registerCommand(COMMANDS.lastPage, this.lastPage, this),
+      registerCommand(COMMANDS.nextPage, this.nextPage, this)
     ].forEach((command) => context.subscriptions.push(command));
     registerTreeDataProvider('z-rss-feeds', this.feedListProvider);
     registerTreeDataProvider('z-rss-articles', this.articleListProvider);
@@ -111,6 +114,7 @@ class App {
     }
   }
 
+  // 获取订阅列表
   async getFeedList() {
     await vscode.window.withProgress(
       {
@@ -156,6 +160,7 @@ class App {
     return this.articles;
   }
 
+  // 获取文章列表
   async getArticleList(feed?: Feed) {
     if (!feed) {
       await this.refreshArticleListFn();
@@ -167,9 +172,34 @@ class App {
     }
   }
 
+  // 获取分页参数
+  getPageParams() {
+    return {
+      limit: 20,
+      skip: 20 * (this.page - 1)
+    };
+  }
+
+  // 上一页
+  lastPage() {
+    this.page = Math.max(1, this.page - 1);
+    this.refreshArticleListFn(this.getPageParams());
+  }
+
+  // 下一页
+  nextPage() {
+    this.page++;
+    this.refreshArticleListFn(this.getPageParams());
+  }
+
+  // 获取文章列表
   async getHeadlines(params: any) {
-    this.refreshArticleListFn = async () => {
-      await this.getHeadlines(params);
+    this.page = 1;
+    this.refreshArticleListFn = async (newParams: any) => {
+      await this.getHeadlines({
+        ...params,
+        ...newParams
+      });
     };
     await vscode.window.withProgress(
       {
@@ -194,6 +224,7 @@ class App {
     );
   }
 
+  // 获取文章详情
   async getArticle(article: Article) {
     await vscode.window.withProgress(
       {
@@ -223,6 +254,7 @@ class App {
     );
   }
 
+  // 置为已读根据ID
   async markAsReadByArticleIds(ids: string | string[], isRead: boolean) {
     await ttrss.fetch({
       op: 'updateArticle',
@@ -233,6 +265,7 @@ class App {
     this.articleListProvider.refresh();
   }
 
+  // 置为已读根据文章
   async markAsReadByFeed(feed: Feed) {
     await ttrss.fetch({
       op: 'catchupFeed',
@@ -241,6 +274,7 @@ class App {
     });
   }
 
+  // 置为已读
   async markAsRead(feed?: Feed) {
     if (feed) {
       await this.markAsReadByFeed(feed);
@@ -258,19 +292,23 @@ class App {
     this.getFeedList();
   }
 
+  // 置为已读并刷新
   async markAsReadAndNextPage() {
     this.markAsRead();
     this.getArticleList();
   }
 
+  // 收藏
   async star(article: Article) {
     this.starArticle(article, true);
   }
 
+  // 取消收藏
   async unstar(article: Article) {
     this.starArticle(article, false);
   }
 
+  // 收藏请求
   async starArticle(article: Article, isStar: boolean) {
     await ttrss.fetch({
       op: 'updateArticle',
@@ -282,6 +320,7 @@ class App {
     this.getFeedList();
   }
 
+  // 打开阅读面板
   async openWebviewPanel(article: Article, content: string) {
     const title: string = config.app.get('readerViewTitle', '').replace(new RegExp('\\${name}', 'g'), article.title || '');
 
@@ -304,6 +343,7 @@ class App {
     this.webviewPanel.reveal();
   }
 
+  // 通过外部浏览器阅读
   viewInBrowser(article: Article) {
     if (article.link) {
       vscode.env.openExternal(vscode.Uri.parse(article.link));
@@ -314,6 +354,7 @@ class App {
 
   unsubscribeFeed() {}
 
+  // 搜索
   async searchArticles() {
     const searchPrefix = config.app.get('searchPrefix', '');
     const keyword = await vscode.window.showInputBox({

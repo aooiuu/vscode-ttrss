@@ -11,5 +11,7 @@ export enum COMMANDS {
   viewInBrowser = 'z-rss.viewInBrowser',
   subscribeToFeed = 'z-rss.subscribeToFeed',
   unsubscribeFeed = 'z-rss.unsubscribeFeed',
-  searchArticles = 'z-rss.searchArticles'
+  searchArticles = 'z-rss.searchArticles',
+  lastPage = 'z-rss.lastPage',
+  nextPage = 'z-rss.nextPage'
 }
