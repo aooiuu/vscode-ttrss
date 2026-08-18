@@ -1,3 +1,5 @@
+
+
 # vscode-ttrss
 
 > tt-rss for vscode
@@ -23,13 +25,13 @@
     />
   </a>
   <a href="https://github.com/aooiuu/vscode-ttrss">
-    <img src="https://img.shields.io/github/stars/aooiuu/z-rss" alt="" />
+    <img src="https://img.shields.io/github/stars/aooiuu/vscode-ttrss" alt="" />
   </a>
   <a href="https://github.com/aooiuu/vscode-ttrss">
-    <img src="https://img.shields.io/github/forks/aooiuu/z-rss" alt="" />
+    <img src="https://img.shields.io/github/forks/aooiuu/vscode-ttrss" alt="" />
   </a>
   <a href="https://github.com/aooiuu/vscode-ttrss">
-    <img src="https://img.shields.io/github/issues/aooiuu/z-rss" alt="" />
+    <img src="https://img.shields.io/github/issues/aooiuu/vscode-ttrss" alt="" />
   </a>
 </p>
 
